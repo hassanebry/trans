@@ -1,0 +1,13 @@
+POST http://localhost:8080/api/v1/trans/user
+Content-Type: application/json
+
+{
+"nom": "Hassane",
+  "prenom": "barry",
+  "adresse": "1 rue de test, 44300 nantes",
+  "email": "hassane.barry@test.com",
+  "password": "password",
+  "telephone": "12345678"
+}
+
+###
