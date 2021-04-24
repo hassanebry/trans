@@ -11,3 +11,40 @@ Content-Type: application/json
 }
 
 ###
+
+POST http://localhost:8080/api/v1/trans/user
+Content-Type: application/json
+
+{
+  "nom": "firmino",
+  "prenom": "Bobby",
+  "adresse": "2 rue de test, 44300 nantes",
+  "email": "bobby.firmino@test.com",
+  "password": "password",
+  "telephone": "12345678"
+}
+
+###
+
+PUT http://localhost:8080/api/v1/trans/user/admin
+Content-Type: application/x-www-form-urlencoded
+
+email=bobby.firmino@test.com
+
+###
+
+GET http://localhost:8080/api/v1/trans/users
+Authorization: Basic hassane.barry@test.com password
+
+###
+
+PUT http://localhost:8080/api/v1/trans/user/2
+Content-Type: application/x-www-form-urlencoded
+
+prenom=Roberto
+
+###
+
+DELETE http://localhost:8080/api/v1/trans/user/1
+
+###
