@@ -1,11 +1,12 @@
 package fr.groupe5.fr_miage_orleans_projetm1s2groupe5.controller;
 
-import com.mongodb.client.model.Collation;
 import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.exceptions.EmailDejaExistantException;
 import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.exceptions.UtilisateurInexistantException;
+import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.facade.FacadeAbonnement;
+import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.facade.FacadeTitreTransport;
 import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.facade.FacadeUtilisateur;
+import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.exceptions.InformationIncorrects;
 import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.model.Utilisateur;
-import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.facade.FacadeUtilisateurImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,16 +15,25 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/trans")
-public class UtilisateurController {
+public class GestionTransportController {
 
     @Autowired
     private final FacadeUtilisateur facadeUtilisateur;
 
-    public UtilisateurController(FacadeUtilisateurImpl facadeUtilisateur) {
+    @Autowired
+    private final FacadeAbonnement facadeAbonnement;
+
+    @Autowired
+    private final FacadeTitreTransport facadeTitreTransport;
+
+    public GestionTransportController(FacadeUtilisateur facadeUtilisateur, FacadeAbonnement facadeAbonnement, FacadeTitreTransport facadeTitreTransport) {
         this.facadeUtilisateur = facadeUtilisateur;
+        this.facadeAbonnement = facadeAbonnement;
+        this.facadeTitreTransport = facadeTitreTransport;
     }
 
     @PostMapping(value = "/user", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -65,6 +75,38 @@ public class UtilisateurController {
             return ResponseEntity.status(HttpStatus.resolve(204)).body("utilisateur supprimé");
         } catch (UtilisateurInexistantException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping(value = "/abonnement/{username}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<String> souscrireAbonnement(@PathVariable String username, @RequestParam String type){
+        try {
+            facadeAbonnement.souscriptionAbonnement(username, type);
+        } catch (InformationIncorrects informationIncorrects) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.created(URI.create("/api/v1/trans/abonnement/"+username)).body("Souscription OK !");
+    }
+
+    @PostMapping(value = "/titreTransport/{username}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<String> commanderTitreTransport(@PathVariable String username, @RequestParam String type){
+        try {
+            String validation = facadeTitreTransport.commanderTitreTransport(username, type);
+            return ResponseEntity.created(URI.create("/api/v1/trans/titreTransport/"+username)).header("Validation", validation).body("Achat OK !");
+        } catch (UtilisateurInexistantException e) {
+            return ResponseEntity.notFound().build();
+        } catch (InformationIncorrects informationIncorrects) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping(value = "/titreTransport/validation/{username}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<String> validerUnTitre(@PathVariable String username, @RequestParam String id){
+        try {
+            facadeTitreTransport.validerTicket(username, id);
+            return ResponseEntity.ok().body("Votre titre a été validé avec succès");
+        } catch (InformationIncorrects informationIncorrects) {
+            return ResponseEntity.badRequest().body("Votre validation est incorrect");
         }
     }
 }

@@ -2,10 +2,11 @@ POST http://localhost:8080/api/v1/trans/user
 Content-Type: application/json
 
 {
-"nom": "Hassane",
-  "prenom": "barry",
+"nom": "Salah",
+  "prenom": "moh",
   "adresse": "1 rue de test, 44300 nantes",
-  "email": "hassane.barry@test.com",
+  "email": "moh.salah@test.com",
+  "username": "mohsalah",
   "password": "password",
   "telephone": "12345678"
 }
@@ -20,6 +21,7 @@ Content-Type: application/json
   "prenom": "Bobby",
   "adresse": "2 rue de test, 44300 nantes",
   "email": "bobby.firmino@test.com",
+  "username": "bobbyFirm",
   "password": "password",
   "telephone": "12345678"
 }
@@ -34,7 +36,7 @@ email=bobby.firmino@test.com
 ###
 
 GET http://localhost:8080/api/v1/trans/users
-Authorization: Basic hassane.barry@test.com password
+Authorization: Basic bobby.firmino@test.com password
 
 ###
 
@@ -45,6 +47,48 @@ prenom=Roberto
 
 ###
 
+PUT http://localhost:8080/api/v1/trans/user/2
+Content-Type: application/x-www-form-urlencoded
+
+nom=Firmino
+
+###
+
 DELETE http://localhost:8080/api/v1/trans/user/1
+
+###
+
+POST http://localhost:8080/api/v1/trans/abonnement/ali
+Content-Type: application/x-www-form-urlencoded
+
+type=mensuel
+
+###
+
+POST http://localhost:8080/api/v1/trans/abonnement/ali
+Content-Type: application/x-www-form-urlencoded
+
+type=annuel
+
+###
+
+POST http://localhost:8080/api/v1/trans/abonnement/ali
+Content-Type: application/x-www-form-urlencoded
+
+type=annuelle
+
+###
+
+POST http://localhost:8080/api/v1/trans/titreTransport/mohsalah
+Content-Type: application/x-www-form-urlencoded
+
+type=1H
+
+###
+
+POST http://localhost:8080/api/v1/trans/titreTransport/mohsalah
+Content-Type: application/x-www-form-urlencoded
+
+type=24H
 
 ###

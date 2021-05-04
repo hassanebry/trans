@@ -31,6 +31,9 @@ public class Utilisateur {
     private String email;
 
     @Column(nullable = false)
+    private String username;
+
+    @Column(nullable = false)
     private String password;
 
     private String telephone;
@@ -40,11 +43,12 @@ public class Utilisateur {
     @JsonSerialize(using = JsonDateSerializer.class)
     private LocalDateTime dateInsc;
 
-    public Utilisateur(String nom, String prenom, String adresse, String email, String password, String telephone) {
+    public Utilisateur(String nom, String prenom, String adresse, String email, String username, String password, String telephone) {
         this.nom = nom;
         this.prenom = prenom;
         this.adresse = adresse;
         this.email = email;
+        this.username = username;
         this.password = password;
         this.telephone = telephone;
         this.dateInsc = LocalDateTime.now();
@@ -89,6 +93,14 @@ public class Utilisateur {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {

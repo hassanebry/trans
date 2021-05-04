@@ -55,6 +55,13 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.24</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.mongodb/mongodb-driver -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver</artifactId>
+            <version>3.12.8</version>
+        </dependency>
     </dependencies>
 
     <build>
