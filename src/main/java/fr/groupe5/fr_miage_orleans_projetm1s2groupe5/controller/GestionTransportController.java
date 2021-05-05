@@ -1,11 +1,10 @@
 package fr.groupe5.fr_miage_orleans_projetm1s2groupe5.controller;
 
-import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.exceptions.EmailDejaExistantException;
-import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.exceptions.UtilisateurInexistantException;
+import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.exceptions.*;
 import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.facade.FacadeAbonnement;
 import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.facade.FacadeTitreTransport;
 import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.facade.FacadeUtilisateur;
-import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.exceptions.InformationIncorrects;
+import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.model.TitreTransport;
 import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.model.Utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.Collection;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/trans")
@@ -107,6 +105,19 @@ public class GestionTransportController {
             return ResponseEntity.ok().body("Votre titre a été validé avec succès");
         } catch (InformationIncorrects informationIncorrects) {
             return ResponseEntity.badRequest().body("Votre validation est incorrect");
+        } catch (TitreDejaValidException e) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Votre titre est dejà valide");
+        }
+    }
+
+    @GetMapping(value = "/titreTransports/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Collection<TitreTransport> titreTransportsParUser(@PathVariable String username){
+        try {
+            return facadeTitreTransport.titreSejourParUtilisateur(username);
+        } catch (UtilisateurInexistantException e) {
+            return (Collection<TitreTransport>) ResponseEntity.notFound().build();
+        } catch (AucunTitreAcheteeException e) {
+            return (Collection<TitreTransport>) ResponseEntity.badRequest().build();
         }
     }
 }

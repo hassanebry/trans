@@ -14,6 +14,7 @@ public class TitreTransport {
 
     @Id
     private String id;
+    private String username;
     private String type;
 
     @JsonSerialize(using = JsonDateSerializer.class)
@@ -23,7 +24,8 @@ public class TitreTransport {
     private boolean valid;
 
 
-    public TitreTransport(String type, LocalDateTime dateExpiration) {
+    public TitreTransport(String username, String type, LocalDateTime dateExpiration) {
+        this.username = username;
         this.type = type;
         this.dateExpiration = dateExpiration;
         this.valid = false;
@@ -38,6 +40,14 @@ public class TitreTransport {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getType() {
@@ -68,8 +78,10 @@ public class TitreTransport {
     public String toString() {
         return "TitreTransport{" +
                 "id='" + id + '\'' +
+                ", username='" + username + '\'' +
                 ", type='" + type + '\'' +
                 ", dateExpiration=" + dateExpiration +
+                ", valid=" + valid +
                 '}';
     }
 }

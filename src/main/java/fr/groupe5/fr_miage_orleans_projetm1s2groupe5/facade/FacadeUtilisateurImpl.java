@@ -8,7 +8,6 @@ import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.repo.UtilisateurRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Collection;
