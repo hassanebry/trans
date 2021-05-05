@@ -4,6 +4,7 @@ import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.exceptions.*;
 import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.facade.FacadeAbonnement;
 import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.facade.FacadeTitreTransport;
 import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.facade.FacadeUtilisateur;
+import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.model.Abonnement;
 import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.model.TitreTransport;
 import fr.groupe5.fr_miage_orleans_projetm1s2groupe5.model.Utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,10 +81,22 @@ public class GestionTransportController {
     public ResponseEntity<String> souscrireAbonnement(@PathVariable String username, @RequestParam String type){
         try {
             facadeAbonnement.souscriptionAbonnement(username, type);
+            return ResponseEntity.created(URI.create("/api/v1/trans/abonnement/"+username)).body("Souscription OK !");
         } catch (InformationIncorrects informationIncorrects) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (UtilisateurInexistantException e) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.created(URI.create("/api/v1/trans/abonnement/"+username)).body("Souscription OK !");
+
+    }
+
+    @GetMapping(value = "/abonnements/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Collection<Abonnement> abonnemetsParUtilisateur(@PathVariable String username){
+        try {
+            return facadeAbonnement.abonnementParUser(username);
+        } catch (UtilisateurInexistantException e) {
+            return (Collection<Abonnement>) ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping(value = "/titreTransport/{username}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)

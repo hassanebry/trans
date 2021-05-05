@@ -58,24 +58,29 @@ DELETE http://localhost:8080/api/v1/trans/user/1
 
 ###
 
-POST http://localhost:8080/api/v1/trans/abonnement/ali
+POST http://localhost:8080/api/v1/trans/abonnement/mohsalah
 Content-Type: application/x-www-form-urlencoded
 
 type=mensuel
 
 ###
 
-POST http://localhost:8080/api/v1/trans/abonnement/ali
+POST http://localhost:8080/api/v1/trans/abonnement/mohsalah
 Content-Type: application/x-www-form-urlencoded
 
 type=annuel
 
 ###
 
-POST http://localhost:8080/api/v1/trans/abonnement/ali
+POST http://localhost:8080/api/v1/trans/abonnement/mohsalah
 Content-Type: application/x-www-form-urlencoded
 
 type=annuelle
+
+###
+
+GET http://localhost:8080/api/v1/trans/abonnements/mohsalah
+Accept: application/json
 
 ###
 

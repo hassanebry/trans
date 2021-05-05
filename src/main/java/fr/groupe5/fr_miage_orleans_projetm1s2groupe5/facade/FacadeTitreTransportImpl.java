@@ -78,7 +78,7 @@ public class FacadeTitreTransportImpl implements FacadeTitreTransport{
     @Override
     public Collection<TitreTransport> titreSejourParUtilisateur(String username) throws UtilisateurInexistantException, AucunTitreAcheteeException {
         Optional<Utilisateur> user = utilisateurRepo.findByUsername(username);
-        Collection<TitreTransport> mesTitres = titreTransportRepo.findAll();
+        Collection<TitreTransport> mesTitres = titreTransportRepo.findTitreTransportByUsername(username);
         if (user.isEmpty()){
             throw new UtilisateurInexistantException();
         }

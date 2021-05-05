@@ -14,6 +14,8 @@ public class Abonnement {
 
     @Id
     private String id;
+
+    private String username;
     private String type;
 
     @JsonSerialize(using = JsonDateSerializer.class)
@@ -24,13 +26,11 @@ public class Abonnement {
     @JsonDeserialize(using = JsonDateDeserializer.class)
     private LocalDateTime dateExpiration;
 
-    public Abonnement(String type, LocalDateTime dateSouscription, LocalDateTime dateExpiration) {
+    public Abonnement(String username, String type, LocalDateTime dateSouscription, LocalDateTime dateExpiration) {
+        this.username = username;
         this.type = type;
         this.dateSouscription = dateSouscription;
         this.dateExpiration = dateExpiration;
-    }
-
-    public Abonnement() {
     }
 
     public String getId() {
@@ -39,6 +39,14 @@ public class Abonnement {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getType() {
@@ -69,6 +77,7 @@ public class Abonnement {
     public String toString() {
         return "Abonnement{" +
                 "id='" + id + '\'' +
+                ", username='" + username + '\'' +
                 ", type='" + type + '\'' +
                 ", dateSouscription=" + dateSouscription +
                 ", dateExpiration=" + dateExpiration +
