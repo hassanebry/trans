@@ -26,16 +26,18 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        Optional<Utilisateur> utilisateur = utilisateurRepo.findByEmail(s);
+        Optional<Utilisateur> utilisateur = utilisateurRepo.findByUsername(s);
         if (utilisateur.isEmpty()){
-            throw new UsernameNotFoundException("l'utilisateur ayant l'email:  " +s+ " n'existe pas");
+            throw new UsernameNotFoundException("l'utilisateur ayant le pseudo:  " +s+ " n'existe pas");
         }
         String[] roles = utilisateur.get().isAdmin() ? ROLES_ADMIN : ROLES_USER;
+
         UserDetails userDetails = User.builder()
-                .username(utilisateur.get().getEmail())
+                .username(utilisateur.get().getUsername())
                 .password(passwordEncoder.encode(utilisateur.get().getPassword()))
                 .roles(roles)
                 .build();
+
         return userDetails ;
     }
 }

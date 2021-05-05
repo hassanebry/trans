@@ -28,7 +28,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/api/v*/trans/user").permitAll()
                 .antMatchers(HttpMethod.GET, "api/v*/trans/users").hasRole("USER")
-                .anyRequest().permitAll()
+                .antMatchers(HttpMethod.PUT,"api/v*/trans/user/admin").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PUT,"api/v*/trans/user/{id}").hasRole("USER")
+                .antMatchers(HttpMethod.DELETE,"api/v*/trans/user/{id}").hasRole("USER")
+                .antMatchers(HttpMethod.POST,"api/v*/trans/abonnement/{username}").hasRole("USER")
+                .antMatchers(HttpMethod.GET,"api/v*/trans/abonnements/{username}").hasRole("USER")
+                .antMatchers(HttpMethod.POST,"api/v*/trans/titreTransport/{username}").hasRole("USER")
+                .antMatchers(HttpMethod.PUT,"api/v*/trans/titreTransport/validation/{username}").hasRole("USER")
+                .antMatchers(HttpMethod.GET,"api/v*/trans/titreTransports/{username}").hasRole("USER")
+                .anyRequest().hasRole("USER")
                 .and().httpBasic()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }

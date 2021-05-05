@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.Collection;
 
 @RestController
@@ -51,9 +52,14 @@ public class GestionTransportController {
     }
 
     @PutMapping(value = "/user/admin", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> etreAdmin(@RequestParam String email){
-        int i = this.facadeUtilisateur.enableAdmin(email);
-        return ResponseEntity.ok().body("Changement effectué avec succès");
+    public ResponseEntity<String> etreAdmin(@RequestParam String username, Principal principal){
+        if (principal.getName().equals(username)){
+            int i = this.facadeUtilisateur.enableAdmin(username);
+            return ResponseEntity.ok().body("Changement effectué avec succès");
+        }else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Vous netes pas authorisé");
+        }
+
     }
 
     @PutMapping(path = "/user/{id}")
@@ -78,59 +84,81 @@ public class GestionTransportController {
     }
 
     @PostMapping(value = "/abonnement/{username}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> souscrireAbonnement(@PathVariable String username, @RequestParam String type){
-        try {
-            facadeAbonnement.souscriptionAbonnement(username, type);
-            return ResponseEntity.created(URI.create("/api/v1/trans/abonnement/"+username)).body("Souscription OK !");
-        } catch (InformationIncorrects informationIncorrects) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        } catch (UtilisateurInexistantException e) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<String> souscrireAbonnement(@PathVariable String username, @RequestParam String type, Principal principal){
+        if (principal.getName().equals(username)){
+
+            try {
+                facadeAbonnement.souscriptionAbonnement(username, type);
+                return ResponseEntity.created(URI.create("/api/v1/trans/abonnement/"+username)).body("Souscription OK !");
+            } catch (InformationIncorrects informationIncorrects) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            } catch (UtilisateurInexistantException e) {
+                return ResponseEntity.notFound().build();
+            }
+        }else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Vous netes pas authorisé");
         }
 
     }
 
     @GetMapping(value = "/abonnements/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<Abonnement> abonnemetsParUtilisateur(@PathVariable String username){
-        try {
-            return facadeAbonnement.abonnementParUser(username);
-        } catch (UtilisateurInexistantException e) {
-            return (Collection<Abonnement>) ResponseEntity.notFound().build();
+    public Collection<Abonnement> abonnemetsParUtilisateur(@PathVariable String username, Principal principal){
+        if (principal.getName().equals(username)){
+            try {
+                return facadeAbonnement.abonnementParUser(username);
+            } catch (UtilisateurInexistantException e) {
+                return (Collection<Abonnement>) ResponseEntity.notFound().build();
+            }
+        }else {
+            return (Collection<Abonnement>) ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Vous netes pas authorisé");
         }
     }
 
     @PostMapping(value = "/titreTransport/{username}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> commanderTitreTransport(@PathVariable String username, @RequestParam String type){
-        try {
-            String validation = facadeTitreTransport.commanderTitreTransport(username, type);
-            return ResponseEntity.created(URI.create("/api/v1/trans/titreTransport/"+username)).header("Validation", validation).body("Achat OK !");
-        } catch (UtilisateurInexistantException e) {
-            return ResponseEntity.notFound().build();
-        } catch (InformationIncorrects informationIncorrects) {
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<String> commanderTitreTransport(@PathVariable String username, @RequestParam String type, Principal principal){
+        if (principal.getName().equals(username)){
+            try {
+                String validation = facadeTitreTransport.commanderTitreTransport(username, type);
+                return ResponseEntity.created(URI.create("/api/v1/trans/titreTransport/"+username)).header("Validation", validation).body("Achat OK !");
+            } catch (UtilisateurInexistantException e) {
+                return ResponseEntity.notFound().build();
+            } catch (InformationIncorrects informationIncorrects) {
+                return ResponseEntity.badRequest().build();
+            }
+        }else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Vous netes pas authorisé");
         }
     }
 
     @PutMapping(value = "/titreTransport/validation/{username}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> validerUnTitre(@PathVariable String username, @RequestParam String id){
-        try {
-            facadeTitreTransport.validerTicket(username, id);
-            return ResponseEntity.ok().body("Votre titre a été validé avec succès");
-        } catch (InformationIncorrects informationIncorrects) {
-            return ResponseEntity.badRequest().body("Votre validation est incorrect");
-        } catch (TitreDejaValidException e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Votre titre est dejà valide");
+    public ResponseEntity<String> validerUnTitre(@PathVariable String username, @RequestParam String id, Principal principal){
+        if (principal.getName().equals(username)){
+            try {
+                facadeTitreTransport.validerTicket(username, id);
+                return ResponseEntity.ok().body("Votre titre a été validé avec succès");
+            } catch (InformationIncorrects informationIncorrects) {
+                return ResponseEntity.badRequest().body("Votre validation est incorrect");
+            } catch (TitreDejaValidException e) {
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Votre titre est dejà valide");
+            }
+        }else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Vous netes pas authorisé");
         }
+
     }
 
     @GetMapping(value = "/titreTransports/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<TitreTransport> titreTransportsParUser(@PathVariable String username){
-        try {
-            return facadeTitreTransport.titreSejourParUtilisateur(username);
-        } catch (UtilisateurInexistantException e) {
-            return (Collection<TitreTransport>) ResponseEntity.notFound().build();
-        } catch (AucunTitreAcheteeException e) {
-            return (Collection<TitreTransport>) ResponseEntity.badRequest().build();
+    public Collection<TitreTransport> titreTransportsParUser(@PathVariable String username, Principal principal){
+        if (principal.getName().equals(username)){
+            try {
+                return facadeTitreTransport.titreSejourParUtilisateur(username);
+            } catch (UtilisateurInexistantException e) {
+                return (Collection<TitreTransport>) ResponseEntity.notFound().build();
+            } catch (AucunTitreAcheteeException e) {
+                return (Collection<TitreTransport>) ResponseEntity.badRequest().build();
+            }
+        }else {
+            return (Collection<TitreTransport>) ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Vous netes pas authorisé");
         }
     }
 }
