@@ -36,6 +36,11 @@ public class GestionTransportController {
         this.facadeTitreTransport = facadeTitreTransport;
     }
 
+    /**
+     *
+     * @param utilisateur (objet utilisateur dans le corps de la requete en JSON)
+     * @return 201 Created si tout se passe bien ou un code conflit
+     */
     @PostMapping(value = "/user", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> inscription(@RequestBody Utilisateur utilisateur){
         try {
